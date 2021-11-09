@@ -60,8 +60,8 @@ class Game
   end
 
   def check_guess
-    test_guess = @codebreaker.guess_sequence
-    test_secret_sequence = @codemaker.secret_sequence
+    test_guess = @codebreaker.guess_sequence.map(&:clone)
+    test_secret_sequence = @codemaker.secret_sequence.map(&:clone)
     i = 0
     while i < test_secret_sequence.length
       if test_guess[i] == test_secret_sequence[i]
