@@ -60,14 +60,33 @@ class Game
   end
 
   def check_guess
+    test_guess = @codebreaker.guess_sequence
+    test_secret_sequence = @codemaker.secret_sequence
     i = 0
-    while i < @codemaker.secret_sequence.length
-      if @codemaker.secret_sequence[i] == @codebreaker.guess_sequence[i]
+    while i < test_secret_sequence.length
+      if test_guess[i] == test_secret_sequence[i]
         @guess_comparison.push('correct color and position')
-      else
-        @guess_comparison.push('nothing')
+        test_guess.delete_at(i)
+        test_secret_sequence.delete_at(i)
       end
       i += 1
+    end
+
+    if @guess_comparison.length < 4
+      i = 0
+      while i < test_secret_sequence.length
+        test_secret_sequence.include?(test_guess[i])
+        @guess_comparison.push('correct color but not position')
+        test_guess.delete_at(i)
+        test_secret_sequence.delete_at(i)
+        i += 1
+      end
+    end
+
+    if @guess_comparison.length < 4
+      while @guess_comparison.length < 4
+        @guess_comparison.push('nothing')
+      end
     end
     puts @guess_comparison
   end
