@@ -83,11 +83,8 @@ class Game
       end
     end
 
-    if @guess_comparison.length < 4
-      while @guess_comparison.length < 4
-        @guess_comparison.push('nothing')
-      end
-    end
+    @guess_comparison.push('nothing') while @guess_comparison.length < 4 if @guess_comparison.length < 4
+    @guess_comparison.shuffle!
     puts @guess_comparison
   end
 
