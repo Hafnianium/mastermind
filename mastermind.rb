@@ -43,6 +43,8 @@ class Game
     @turn_count = 1
     @winner = ''
     @guess_comparison = []
+    @test_guess = []
+    @test_secret_sequence = []
     play_game
   end
 
@@ -59,30 +61,53 @@ class Game
     @turn_count += 1
   end
 
-  def check_guess
-    test_guess = @codebreaker.guess_sequence.map(&:clone)
-    test_secret_sequence = @codemaker.secret_sequence.map(&:clone)
+  def exact_match_check
     i = 0
-    while i < test_secret_sequence.length
-      if test_guess[i] == test_secret_sequence[i]
+    while i < @test_guess.length 
+      if @test_guess[i] == @test_secret_sequence[i]
         @guess_comparison.push('correct color and position')
-        test_guess.delete_at(i)
-        test_secret_sequence.delete_at(i)
-      end
-      i += 1
-    end
-
-    if @guess_comparison.length < 4
-      i = 0
-      while i < test_secret_sequence.length
-        test_secret_sequence.include?(test_guess[i])
-        @guess_comparison.push('correct color but not position')
-        test_guess.delete_at(i)
-        test_secret_sequence.delete_at(i)
+        @test_guess.delete_at(i)
+        @test_secret_sequence.delete_at(i)
+      else
         i += 1
       end
     end
+  end
 
+  def color_match_check
+    if @guess_comparison.length < 4
+      i = 0
+      while i < @test_guess.length
+        if @test_secret_sequence.include?(@test_guess[i])
+          @guess_comparison.push('correct color but not position')
+          @test_secret_sequence.delete(@test_guess[i])
+          @test_guess.delete_at(i)
+        else
+          i += 1
+        end
+      
+      end
+    end
+  end
+
+  def check_guess
+    @test_guess = @codebreaker.guess_sequence.map(&:clone)
+    @test_secret_sequence = @codemaker.secret_sequence.map(&:clone)
+    p "test_guess: #{@test_guess}"
+    p "test_secret_sequence: #{@test_secret_sequence}"
+    p "guess_comparison: #{@guess_comparison}."
+    p "running exact match check:"
+    print "\n"
+    exact_match_check
+    p "test_guess: #{@test_guess}"
+    p "test_secret_sequence: #{@test_secret_sequence}"
+    p "guess_comparison: #{@guess_comparison}."
+    p "running color match check"
+    print "\n"
+    color_match_check
+    p "test_guess: #{@test_guess}"
+    p "test_secret_sequence: #{@test_secret_sequence}"
+    p "guess_comparison: #{@guess_comparison}."
     @guess_comparison.push('nothing') while @guess_comparison.length < 4 if @guess_comparison.length < 4
     @guess_comparison.shuffle!
     puts @guess_comparison
